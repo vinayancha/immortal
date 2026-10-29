@@ -182,8 +182,18 @@ object DreamPolicy {
     // dream cycles overnight (issue #73). Let the scheduler re-blank in place instead.
     if (SleepScheduler.handleRedreamDuringOvernight(context)) return
     runCatching {
+      // Continue with the SAME screensaver the system dream was showing: with the digital-clock
+      // screensaver on, the force-wake handoff must keep showing the clock, not swap to photos.
+      // (The photo frame stays reachable on demand from the home-screen Screensaver button.)
+      val intent =
+          if (DigitalClockConfig.load(context).enabled) {
+            Intent(context, DigitalClockPreviewActivity::class.java)
+                .putExtra(DigitalClockPreviewActivity.EXTRA_CONTINUATION, true)
+          } else {
+            Intent(context, PhotoFramePreviewActivity::class.java)
+          }
       context.startActivity(
-          Intent(context, PhotoFramePreviewActivity::class.java)
+          intent
               // The continuation frame IS the screensaver to the user, so a tap on it must honour
               // the "open when dismissed" target like the dream's own tap handler (issue #146).
               .putExtra(PhotoFramePreviewActivity.EXTRA_LAUNCH_DISMISS_APP, true)
