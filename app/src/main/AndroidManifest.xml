@@ -254,6 +254,7 @@
             android:name=".DigitalClockPreviewActivity"
             android:exported="false"
             android:excludeFromRecents="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.SampleApp" />
 
         <!-- "Tools": launcher screen for the in-process tool Activities, opened from the home tile. -->
